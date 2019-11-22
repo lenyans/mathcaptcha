@@ -189,13 +189,38 @@ class Mathcaptcha
         } else {
             if ($this->useMath) {
                 // 数学运算
-                $operator = array_rand(['+', 'x']);
-                $a = mt_rand(0, 20);
-                $b = mt_rand(0, 5);
-                $real_val = $operator == '+' ? $a + $b : $a * $b;       // 最终验证码内容
-                $code = array_merge(explode('', $a), [$operator], explode('', $b), ['=', '?']);
+                $operation = ['+', '-', 'x'][rand(0, 2)];
+                switch ($operation) {
+                    case '+':
+                        $a = mt_rand(10, 50);
+                        $b = mt_rand(1, 10);
+                        $real_val = $a + $b;
+                        break;
+                    case '-':
+                        $a = mt_rand(15, 30);
+                        $b = mt_rand(0, 5);
+                        $real_val = $a - $b;
+                        break;
+                    case 'x':
+                        $a = mt_rand(3, 9);
+                        $b = mt_rand(3, 9);
+                        $real_val = $a * $b;
+                        break;
+                }
+                $code = array_merge(str_split($a), [$operation], str_split($b), ['=', '?']);
+                $colors = [
+                    [0, 0, 0],
+                    [255, 0, 0],
+                    [100, 0, 100],
+                    [0, 100, 0],
+                    [100, 100, 0],
+                ];
                 for ($i = 0; $i < count($code); $i++) {
-                    imagettftext($this->im, $this->fontSize, mt_rand(-40, 40), $codeNX, $this->fontSize * 1.6, $this->color, $this->fontttf, $code[$i]);
+                    $codeNX += mt_rand($this->fontSize * 1, $this->fontSize * 1.3);
+                    $angle = is_numeric($code) ? mt_rand(-40, 40) : 0;
+                    $color = $colors[mt_rand(0, count($colors) - 1)];
+                    $color = imagecolorallocate($this->im, $color[0], $color[1], $color[2]);
+                    imagettftext($this->im, $this->fontSize, $angle, $codeNX, $this->fontSize * 1.6, $color, $this->fontttf, $code[$i]);
                 }
             } else {
                 for ($i = 0; $i < $this->length; $i++) {
