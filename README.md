@@ -33,5 +33,5 @@ if(!mathcaptcha_check($mathcaptcha)){
 ~~~
 
 ### 验证效果
-
+![avatar](./assets/demo/index.png)
 ..
